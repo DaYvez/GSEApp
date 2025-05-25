@@ -1,0 +1,592 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Purchase - Green Super Electronics{% endblock %}
+
+{% block styles %}
+<style>
+    /* Override base styles for add item page */
+    .container {
+        color: #ffffff !important;
+    }
+    
+    /* Form elements */
+    .form-label, .form-text, .card-header h6, .form-control, .form-select, 
+    .input-group-text, .alert-info, .form-check-label, h2, .fas, .alert, 
+    .alert strong, .small, .text-muted, .form-control::placeholder,
+    .form-select option {
+        color: #ffffff !important;
+    }
+
+    /* Card styling */
+    .card {
+        background-color: #2c3034 !important;
+        border: 1px solid #495057 !important;
+    }
+    .card-header {
+        background-color: #343a40 !important;
+        border-bottom: 1px solid #495057 !important;
+    }
+    .card-body {
+        color: #ffffff !important;
+    }
+
+    /* Form controls */
+    .form-control, .form-select {
+        background-color: #343a40 !important;
+        border: 1px solid #495057 !important;
+        color: #ffffff !important;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: #343a40 !important;
+        border-color: #0d6efd !important;
+        color: #ffffff !important;
+    }
+
+    /* Input groups */
+    .input-group-text {
+        background-color: #343a40 !important;
+        border: 1px solid #495057 !important;
+        color: #ffffff !important;
+    }
+
+    /* Alerts */
+    .alert {
+        background-color: #2c3034 !important;
+        border: 1px solid #495057 !important;
+        color: #ffffff !important;
+    }
+    .alert-info {
+        background-color: #0c5460 !important;
+        border-color: #0c5460 !important;
+    }
+    .alert hr {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+        color: #ffffff !important;
+    }
+    .btn-primary:hover {
+        background-color: #0b5ed7 !important;
+        border-color: #0a58ca !important;
+        color: #ffffff !important;
+    }
+
+    /* Checkboxes */
+    .form-check-input {
+        background-color: #343a40 !important;
+        border-color: #495057 !important;
+    }
+    .form-check-input:checked {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+    }
+    .form-check-label {
+        color: #ffffff !important;
+    }
+
+    /* File inputs */
+    .form-control[type="file"] {
+        color: #ffffff !important;
+    }
+    .form-control[type="file"]::file-selector-button {
+        background-color: #343a40 !important;
+        color: #ffffff !important;
+        border: 1px solid #495057 !important;
+    }
+    .form-control[type="file"]::file-selector-button:hover {
+        background-color: #495057 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4"><i class="fas fa-plus-circle me-2"></i>Add New Purchase</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error:</strong> {{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    <form method="POST" action="{{ url_for('add_item') }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <!-- Basic Information -->
+        <div class="card mb-4">
+            <div class="card-header py-2">
+                <h6 class="mb-0 text-light"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="item_name" class="form-label small text-muted">Item Name</label>
+                    <input type="text" class="form-control" id="item_name" name="name" required>
+                    <small id="item_name_help" class="form-text text-light">Please use brand and proper model name as item name (e.g., "Dell Latitude 5420" or "Samsung Galaxy S21")</small>
+                </div>
+                <div class="mb-3">
+                    <label for="item_type" class="form-label">Item Type</label>
+                    <select class="form-select" id="item_type" name="item_type" required>
+                        <option value="">Select Item Type</option>
+                        <option value="laptop">Laptop</option>
+                        <option value="smartphone">Smartphone</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seller Details -->
+        <div class="card mb-4">
+            <div class="card-header py-2">
+                <h6 class="mb-0 text-light"><i class="fas fa-user me-2"></i>Seller Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="seller_name" class="form-label">Seller Name</label>
+                        <input type="text" class="form-control" id="seller_name" name="seller_name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="seller_nic" class="form-label">Seller NIC</label>
+                        <input type="text" class="form-control" id="seller_nic" name="seller_nic" required>
+                        <div class="form-text">Enter seller's NIC number</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="seller_contact" class="form-label">Seller Contact</label>
+                        <input type="tel" class="form-control" id="seller_contact" name="seller_contact" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="seller_location" class="form-label">Seller Location</label>
+                        <input type="text" class="form-control" id="seller_location" name="seller_location" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Specifications -->
+        <div class="card mb-4">
+            <div class="card-header py-2">
+                <h6 class="mb-0 text-light"><i class="fas fa-microchip me-2"></i>Specifications</h6>
+            </div>
+            <div class="card-body">
+                <!-- Laptop Specifications -->
+                <div id="laptop_specs" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cpu" class="form-label">CPU</label>
+                            <input type="text" class="form-control" id="cpu" name="specs[cpu]" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cpu_speed" class="form-label">CPU Speed (GHz)</label>
+                            <input type="text" class="form-control" id="cpu_speed" name="specs[cpu_speed]" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="ram_capacity" class="form-label">RAM Capacity (GB)</label>
+                            <input type="number" class="form-control" id="ram_capacity" name="specs[ram_capacity]" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="ram_type" class="form-label">RAM Type (DDR)</label>
+                            <select class="form-select" id="ram_type" name="specs[ram_type]" required>
+                                <option value="">Select DDR Type</option>
+                                <option value="DDR3">DDR3</option>
+                                <option value="DDR4">DDR4</option>
+                                <option value="DDR5">DDR5</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="ram_speed" class="form-label">RAM Speed (MHz)</label>
+                            <select class="form-select" id="ram_speed" name="specs[ram_speed]" required>
+                                <option value="">Select RAM Speed</option>
+                                <option value="1600">1600 MHz (DDR3)</option>
+                                <option value="1866">1866 MHz (DDR3)</option>
+                                <option value="2133">2133 MHz (DDR4)</option>
+                                <option value="2400">2400 MHz (DDR4)</option>
+                                <option value="2666">2666 MHz (DDR4)</option>
+                                <option value="3000">3000 MHz (DDR4)</option>
+                                <option value="3200">3200 MHz (DDR4)</option>
+                                <option value="3600">3600 MHz (DDR4)</option>
+                                <option value="4000">4000 MHz (DDR4)</option>
+                                <option value="4800">4800 MHz (DDR5)</option>
+                                <option value="5200">5200 MHz (DDR5)</option>
+                                <option value="5600">5600 MHz (DDR5)</option>
+                                <option value="6000">6000 MHz (DDR5)</option>
+                                <option value="6400">6400 MHz (DDR5)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="storage_type" class="form-label">Storage Type</label>
+                            <select class="form-select" id="storage_type" name="specs[storage_type]" required>
+                                <option value="">Select Storage Type</option>
+                                <option value="HDD">HDD</option>
+                                <option value="SSD">SSD</option>
+                                <option value="NVMe">NVMe</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="storage_size" class="form-label">Storage Size</label>
+                            <select class="form-select" id="storage_size" name="specs[storage_size]" required>
+                                <option value="">Select Storage Size</option>
+                                <option value="128GB">128GB</option>
+                                <option value="256GB">256GB</option>
+                                <option value="512GB">512GB</option>
+                                <option value="1TB">1TB</option>
+                                <option value="2TB">2TB</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="gpu_type" class="form-label">GPU Type</label>
+                            <select class="form-select" id="gpu_type" name="specs[gpu_type]" required>
+                                <option value="">Select GPU Type</option>
+                                <option value="None">None (Integrated)</option>
+                                <option value="NVIDIA">NVIDIA</option>
+                                <option value="AMD">AMD</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="gpu_memory" class="form-label">GPU Memory</label>
+                            <select class="form-select" id="gpu_memory" name="specs[gpu_memory]" required>
+                                <option value="">Select GPU Memory</option>
+                                <option value="2GB">2GB</option>
+                                <option value="4GB">4GB</option>
+                                <option value="6GB">6GB</option>
+                                <option value="8GB">8GB</option>
+                                <option value="12GB">12GB</option>
+                                <option value="16GB">16GB</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="display_type" class="form-label">Display Type</label>
+                            <select class="form-select" id="display_type" name="specs[display_type]" required>
+                                <option value="">Select Display Type</option>
+                                <option value="LCD">LCD</option>
+                                <option value="LED">LED</option>
+                                <option value="IPS">IPS</option>
+                                <option value="OLED">OLED</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="display_resolution" class="form-label">Display Resolution</label>
+                            <select class="form-select" id="display_resolution" name="specs[display_resolution]" required>
+                                <option value="">Select Resolution</option>
+                                <option value="1366x768">1366 x 768 (HD)</option>
+                                <option value="1600x900">1600 x 900 (HD+)</option>
+                                <option value="1920x1080">1920 x 1080 (Full HD)</option>
+                                <option value="2560x1440">2560 x 1440 (QHD)</option>
+                                <option value="2880x1800">2880 x 1800 (Retina)</option>
+                                <option value="3200x1800">3200 x 1800 (QHD+)</option>
+                                <option value="3840x2160">3840 x 2160 (4K UHD)</option>
+                                <option value="custom">Custom Resolution</option>
+                            </select>
+                            <input type="text" class="form-control mt-2" id="custom_resolution" name="specs[custom_resolution]" 
+                                   placeholder="Enter custom resolution (e.g., 1920x1080)" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Additional Features</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="webcam" name="specs[features][]" value="HD Webcam">
+                                        <label class="form-check-label" for="webcam">HD Webcam</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="fingerprint" name="specs[features][]" value="Fingerprint Scanner">
+                                        <label class="form-check-label" for="fingerprint">Fingerprint Scanner</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="charger" name="specs[features][]" value="Charger">
+                                        <label class="form-check-label" for="charger">Charger</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rotatable" name="specs[features][]" value="Rotatable Display">
+                                        <label class="form-check-label" for="rotatable">Rotatable Display</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smartphone Specifications -->
+                <div id="smartphone_specs" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone_model" class="form-label">Phone Model</label>
+                            <input type="text" class="form-control" id="phone_model" name="specs[model]" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone_capacity" class="form-label">Storage Capacity</label>
+                            <select class="form-select" id="phone_capacity" name="specs[capacity]" required>
+                                <option value="">Select Capacity</option>
+                                <option value="64GB">64GB</option>
+                                <option value="128GB">128GB</option>
+                                <option value="256GB">256GB</option>
+                                <option value="512GB">512GB</option>
+                                <option value="1TB">1TB</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Remarks -->
+        <div class="card mb-4">
+            <div class="card-header py-2">
+                <h6 class="mb-0 text-light"><i class="fas fa-comment-dots me-2"></i>Remarks/Damages</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Enter any remarks or damages about the item"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Details -->
+        <div class="card mb-4">
+            <div class="card-header py-2">
+                <h6 class="mb-0 text-light"><i class="fas fa-dollar-sign me-2"></i>Purchase Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="purchase_date" class="form-label">Purchase Date</label>
+                        <input type="date" class="form-control" id="purchase_date" name="purchase_date" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="item_price" class="form-label">Item Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input type="number" class="form-control" id="item_price" name="item_price" step="0.01" required>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="mb-3">Expenses</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="transport_cost" class="form-label">Transport Cost</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input type="number" class="form-control expense-input" id="transport_cost" name="expenses[transport]" step="0.01" value="0">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="food_cost" class="form-label">Food Cost</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input type="number" class="form-control expense-input" id="food_cost" name="expenses[food]" step="0.01" value="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="fuel_cost" class="form-label">Fuel Cost</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input type="number" class="form-control expense-input" id="fuel_cost" name="expenses[fuel]" step="0.01" value="0">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="other_expenses" class="form-label">Other Expenses</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rs.</span>
+                            <input type="number" class="form-control expense-input" id="other_expenses" name="expenses[other]" step="0.01" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Item Price:</strong> Rs.<span id="display_item_price">0.00</span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Total Expenses:</strong> Rs.<span id="total_expenses">0.00</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <strong>Total Purchase Amount:</strong> Rs.<span id="total_purchase">0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Images -->
+        <div class="card mb-4">
+            <div class="card-header py-2">
+                <h6 class="mb-0 text-light"><i class="fas fa-images me-2"></i>Images</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="item_images" class="form-label">Item Images (Multiple)</label>
+                    <input type="file" class="form-control" id="item_images" name="item_images" multiple accept="image/*" required>
+                    <div class="form-text">You can select multiple images</div>
+                </div>
+                <div class="mb-3">
+                    <label for="agreement_image" class="form-label">Agreement Image</label>
+                    <input type="file" class="form-control" id="agreement_image" name="agreement_image" accept="image/*" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Save Purchase
+            </button>
+        </div>
+    </form>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide specifications based on item type
+    const itemTypeSelect = document.getElementById('item_type');
+    const laptopSpecs = document.getElementById('laptop_specs');
+    const smartphoneSpecs = document.getElementById('smartphone_specs');
+
+    function updateRequiredFields() {
+        const isLaptop = itemTypeSelect.value === 'laptop';
+        const isSmartphone = itemTypeSelect.value === 'smartphone';
+
+        // Laptop fields
+        const laptopFields = [
+            'cpu', 'cpu_speed', 'ram_capacity', 'ram_type', 'ram_speed',
+            'storage_type', 'storage_size', 'gpu_type', 'gpu_memory',
+            'display_type', 'display_resolution'
+        ];
+
+        // Smartphone fields
+        const smartphoneFields = ['model', 'capacity'];
+
+        // Update laptop fields
+        laptopFields.forEach(field => {
+            const input = document.querySelector(`[name="specs[${field}]"]`);
+            if (input) {
+                input.required = isLaptop;
+                if (!isLaptop) input.value = '';
+            }
+        });
+
+        // Update smartphone fields
+        smartphoneFields.forEach(field => {
+            const input = document.querySelector(`[name="specs[${field}]"]`);
+            if (input) {
+                input.required = isSmartphone;
+                if (!isSmartphone) input.value = '';
+            }
+        });
+
+        // Show/hide appropriate specs section
+        laptopSpecs.style.display = isLaptop ? 'block' : 'none';
+        smartphoneSpecs.style.display = isSmartphone ? 'block' : 'none';
+    }
+
+    itemTypeSelect.addEventListener('change', updateRequiredFields);
+
+    // Calculate total expenses and purchase amount
+    const expenseInputs = document.querySelectorAll('.expense-input');
+    const itemPriceInput = document.getElementById('item_price');
+    const displayItemPrice = document.getElementById('display_item_price');
+    const totalExpenses = document.getElementById('total_expenses');
+    const totalPurchase = document.getElementById('total_purchase');
+
+    function updateTotals() {
+        let expenses = 0;
+        expenseInputs.forEach(input => {
+            expenses += parseFloat(input.value) || 0;
+        });
+        const itemPrice = parseFloat(itemPriceInput.value) || 0;
+        
+        displayItemPrice.textContent = itemPrice.toFixed(2);
+        totalExpenses.textContent = expenses.toFixed(2);
+        totalPurchase.textContent = (itemPrice + expenses).toFixed(2);
+    }
+
+    expenseInputs.forEach(input => {
+        input.addEventListener('input', updateTotals);
+    });
+    itemPriceInput.addEventListener('input', updateTotals);
+
+    // Form submission handling
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+        console.log('Form submission started');
+        
+        // Update required fields before validation
+        updateRequiredFields();
+        
+        // Log form data
+        const formData = new FormData(form);
+        console.log('Form data:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        
+        // Log files
+        const itemImages = document.getElementById('item_images').files;
+        const agreementImage = document.getElementById('agreement_image').files[0];
+        console.log('Item images:', itemImages.length);
+        console.log('Agreement image:', agreementImage ? agreementImage.name : 'none');
+
+        // Validate form
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('Form validation failed');
+        } else {
+            console.log('Form validation passed');
+        }
+        
+        form.classList.add('was-validated');
+    });
+
+    // Handle custom resolution input
+    const displayResolution = document.getElementById('display_resolution');
+    const customResolution = document.getElementById('custom_resolution');
+    
+    if (displayResolution && customResolution) {
+        displayResolution.addEventListener('change', function() {
+            customResolution.style.display = this.value === 'custom' ? 'block' : 'none';
+            customResolution.required = this.value === 'custom';
+        });
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock %} 

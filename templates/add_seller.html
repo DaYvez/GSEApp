@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Add Seller - Business Management System{% endblock %}
+
+{% block content %}
+<h1>Add New Seller</h1>
+<form method="POST" class="mt-4">
+    <div class="mb-3">
+        <label for="name" class="form-label">Seller Name</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <div class="mb-3">
+        <label for="nic" class="form-label">NIC Number</label>
+        <input type="text" class="form-control" id="nic" name="nic" required>
+    </div>
+    <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input type="text" class="form-control" id="location" name="location" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Seller</button>
+</form>
+{% endblock %} 
