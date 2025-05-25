@@ -23,4 +23,6 @@ instance/
 # Local development
 .DS_Store
 uploads/
-token.json 
+token.json
+credentials.json
+token.pickle 
